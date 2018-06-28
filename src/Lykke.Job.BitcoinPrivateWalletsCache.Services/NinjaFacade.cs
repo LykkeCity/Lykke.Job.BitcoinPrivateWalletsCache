@@ -28,16 +28,9 @@ namespace Lykke.Job.BitcoinPrivateWalletsCache.Services
             }
             catch (WebException ex)
             {
-                var response = (HttpWebResponse) ex.Response;
+                _log.WriteWarning(nameof(NinjaFacade), new { Address = address, StatusCode = ex.Status, ex.Message }, "Balance not calculated", ex);
 
-                switch (response.StatusCode)
-                {
-                    case HttpStatusCode.BadRequest:                        
-                        break;
-                    default:
-                        BalanceNotCalculated?.Invoke(this, new BalanceNotCalculatedEventArgs { Address = address, AttemptsCount = attempt });
-                        break;
-                }
+                BalanceNotCalculated?.Invoke(this, new BalanceNotCalculatedEventArgs { Address = address, AttemptsCount = attempt });
             }
         }
 
